@@ -1,25 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<meta charset="utf-8">
-<title>Aviso</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Perfil del Profesor - ProfesoresYa</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 20px; }
+        .perfil { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h1 { color: #2980b9; margin-bottom: 5px; }
+        .titulo { color: #7f8c8d; font-style: italic; margin-bottom: 20px; }
+        .descripcion { line-height: 1.6; color: #2c3e50; white-space: pre-wrap; }
+        .contacto-box { background: #eef7fe; padding: 20px; border-radius: 10px; margin-top: 25px; border: 1px dashed #3498db; }
+        .boton-volver { display: inline-block; margin-top: 20px; text-decoration: none; color: #3498db; font-weight: bold; }
+    </style>
 </head>
 <body>
-<div id="aviso"></div>
+    <div id="contenido" class="perfil">Cargando información del profesor...</div>
 
-<script>
-const id = new URLSearchParams(window.location.search).get("id");
+    <script>
+        const URL_API = "https://script.google.com/macros/s/AKfycbw4P4VylmH_RimZpQvRNp58Zw1LaAmKby84R_A0u__u3le2LfLLx6cpK6q6V_1TUtbI/exec";
+        const id = new URLSearchParams(window.location.search).get("id");
 
-fetch(`TU_URL_WEB_APP/exec?id=${id}`)
-  .then(r => r.json())
-  .then(p => {
-    document.getElementById("aviso").innerHTML = `
-      <h2>${p.nombre} ${p.apellido}</h2>
-      <p>${p.titulo}</p>
-      <p>${p.descripcion}</p>
-      <p><strong>Contacto:</strong> ${p.contacto}</p>
-    `;
-  });
-</script>
+        fetch(`${URL_API}?id=${id}`)
+        .then(r => r.json())
+        .then(p => {
+            if (!p) {
+                document.getElementById("contenido").innerHTML = "<h2>Profesor no encontrado</h2><a href='index.html'>Volver al listado</a>";
+                return;
+            }
+            document.getElementById("contenido").innerHTML = `
+                <h1>${p.nombre} ${p.apellido}</h1>
+                <div class="titulo">${p.titulo}</div>
+                <p><strong>📍 Ubicación:</strong> ${p.ciudad} (${p.tipo})</p>
+                <hr>
+                <div class="descripcion">${p.descripcion}</div>
+                <div class="contacto-box">
+                    <strong>📧 ¿Querés tomar clases? Contactalo aquí:</strong><br>
+                    <a href="mailto:${p.contacto}">${p.contacto}</a>
+                </div>
+                <a href="index.html" class="boton-volver">⬅ Volver al listado</a>
+            `;
+        })
+        .catch(err => document.getElementById("contenido").innerHTML = "Error al conectar con el servidor.");
+    </script>
 </body>
 </html>
