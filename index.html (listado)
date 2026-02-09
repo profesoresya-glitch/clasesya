@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ProfesoresYa</title>
+</head>
+<body>
+<h1>Profesores disponibles</h1>
+<div id="lista"></div>
+
+<script>
+fetch("TU_URL_WEB_APP/exec")
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById("lista").innerHTML =
+      data.map(p => `
+        <div>
+          <h3>${p.nombre} ${p.apellido}</h3>
+          <p>${p.titulo}</p>
+          <strong>${p.ranking}</strong>
+          <a href="aviso.html?id=${p.id}">Ver aviso</a>
+        </div>
+      `).join("");
+  });
+</script>
+</body>
+</html>
