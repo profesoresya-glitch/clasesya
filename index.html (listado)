@@ -1,27 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<meta charset="utf-8">
-<title>ProfesoresYa</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ProfesoresYa - Encontrá tu Profe</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: auto; }
+        h1 { text-align: center; color: #2c3e50; }
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 6px solid #3498db; }
+        .destacado { border-left-color: #f1c40f; background: #fffdf2; }
+        .nombre { font-size: 1.4em; margin: 0; color: #2980b9; }
+        .info { margin: 8px 0; color: #7f8c8d; }
+        .boton { background: #3498db; color: white; padding: 10px 18px; text-decoration: none; border-radius: 6px; display: inline-block; margin-top: 10px; font-weight: bold; }
+        .boton:hover { background: #2980b9; }
+    </style>
 </head>
 <body>
-<h1>Profesores disponibles</h1>
-<div id="lista"></div>
+    <div class="container">
+        <h1>Profesores Disponibles</h1>
+        <div id="lista">Cargando profesores...</div>
+    </div>
 
-<script>
-fetch("TU_URL_WEB_APP/exec")
-  .then(r => r.json())
-  .then(data => {
-    document.getElementById("lista").innerHTML =
-      data.map(p => `
-        <div>
-          <h3>${p.nombre} ${p.apellido}</h3>
-          <p>${p.titulo}</p>
-          <strong>${p.ranking}</strong>
-          <a href="aviso.html?id=${p.id}">Ver aviso</a>
-        </div>
-      `).join("");
-  });
-</script>
+    <script>
+        const URL_API = "https://script.google.com/macros/s/AKfycbw4P4VylmH_RimZpQvRNp58Zw1LaAmKby84R_A0u__u3le2LfLLx6cpK6q6V_1TUtbI/exec";
+
+        fetch(URL_API)
+        .then(r => r.json())
+        .then(data => {
+            const container = document.getElementById("lista");
+            if (!data || data.length === 0) {
+                container.innerHTML = "<p>No hay profesores activos en este momento.</p>";
+                return;
+            }
+            container.innerHTML = data.map(p => `
+                <div class="card ${p.ranking >= 1000 ? 'destacado' : ''}">
+                    <h2 class="nombre">${p.nombre} ${p.apellido}</h2>
+                    <p class="info"><strong>${p.titulo}</strong></p>
+                    <p class="info">📍 ${p.ciudad} | 💻 ${p.tipo}</p>
+                    <a href="aviso.html?id=${p.id}" class="boton">Ver Perfil y Contactar</a>
+                </div>
+            `).join("");
+        })
+        .catch(err => document.getElementById("lista").innerHTML = "Error al cargar los datos.");
+    </script>
 </body>
 </html>
